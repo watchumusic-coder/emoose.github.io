@@ -1,0 +1,25 @@
+{
+  "name": "emoose-dashboard",
+  "version": "1.0.0",
+  "description": "EMOOSE - Smart IoT Duck Farm Monitoring and Automation System. Local dashboard server (Node.js + Express + Socket.IO + SQLite).",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": ["iot", "esp32", "duck-farm", "monitoring", "emoose"],
+  "author": "EMOOSE Team",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "socket.io": "^4.7.5",
+    "sqlite3": "^5.1.7",
+    "csv-writer": "^1.6.0",
+    "pdfkit": "^0.15.0",
+    "dotenv": "^16.4.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

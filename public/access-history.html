@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EMOOSE — Riwayat Akses</title>
+<meta name="description" content="Riwayat akses login dashboard EMOOSE - catatan waktu, IP, dan status login." />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/png" href="/assets/logo.png" />
+<link rel="stylesheet" href="/css/theme.css">
+<link rel="stylesheet" href="/css/main.css">
+</head>
+<body class="page-dashboard" data-theme="dark">
+  <div class="access-history-shell">
+    <div style="display:flex; justify-content:flex-end; gap:8px; margin-bottom:12px;">
+      <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme"></button>
+      <select class="lang-select" id="lang-select">
+        <option value="id">ID</option>
+        <option value="en">EN</option>
+      </select>
+    </div>
+
+    <a href="/dashboard" class="back-link">&larr; <span data-i18n="back_to_dashboard">Kembali ke Dashboard</span></a>
+
+    <div class="panel">
+      <div class="panel-title" data-i18n="access_history_title">Riwayat Akses Dashboard</div>
+
+      <div class="access-history-toolbar">
+        <div class="export-menu-wrap">
+          <button class="btn" id="export-menu-btn" data-i18n="table_export">Ekspor ▾</button>
+          <div class="export-dropdown" id="export-dropdown">
+            <button id="export-csv-btn" data-i18n="table_export_csv">Ekspor CSV</button>
+            <button id="export-pdf-btn" data-i18n="table_export_pdf">Ekspor PDF</button>
+          </div>
+        </div>
+        <div class="export-menu-wrap">
+          <button class="btn danger" id="delete-menu-btn" data-i18n="access_history_delete_all">Hapus Log Riwayat Akses ▾</button>
+          <div class="export-dropdown" id="delete-dropdown">
+            <button id="delete-range-all" data-i18n="delete_range_all">Hapus Semua</button>
+            <button id="delete-range-3d" data-i18n="delete_range_3d">Lebih dari 3 Hari Lalu</button>
+            <button id="delete-range-1w" data-i18n="delete_range_1w">Lebih dari 1 Minggu Lalu</button>
+            <button id="delete-range-1m" data-i18n="delete_range_1m">Lebih dari 1 Bulan Lalu</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="access-log-list" id="access-log-list"></div>
+    </div>
+  </div>
+
+<script src="/js/theme.js"></script>
+<script src="/js/language.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/access-history.js"></script>
+</body>
+</html>
