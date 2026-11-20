@@ -1,0 +1,193 @@
+/* ==========================================================
+   theme.css — EMOOSE Design Tokens
+   Soft/Modern Chromatic Neubrutalism — flat, minimalis, warna diredam.
+   Palet LOGIN dan DASHBOARD sengaja berbeda (lihat body.page-login /
+   body.page-dashboard) sesuai spesifikasi.
+   NO gradients. NO blurred shadows. Hard shadow only.
+   ========================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap');
+
+:root {
+  --font-display: 'Plus Jakarta Sans', 'Space Grotesk', sans-serif;   /* Judul EMOOSE, Masuk Dashboard */
+  --font-neubrut: 'Plus Jakarta Sans', sans-serif;                     /* label reguler neubrutalism */
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+
+  --radius-sm: 6px;
+  --radius-md: 6px;
+  --radius-lg: 6px;
+
+  --nb-border-w: 2px;
+  --nb-shadow-offset: 4px;
+
+  /* Warna marka peta (Digital Twin) - TETAP SAMA di light/dark, sesuai permintaan */
+  --map-normal: #0eba05;
+  --map-abnormal: #cb0606;
+  --map-manual: #ff960c;
+
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-body);
+}
+
+/* Utility transition class - dipakai di card, input, button agar
+   perpindahan tema (light<->dark) terasa premium & tidak "patah" */
+.nb-transition,
+.panel, .sensor-card, .summary-item, .actuator-row, .node-chip, .btn,
+input, select, textarea, .toast, .status-badge, .login-card, .field input {
+  transition: background-color 300ms ease-in-out,
+              border-color 300ms ease-in-out,
+              box-shadow 300ms ease-in-out,
+              color 300ms ease-in-out,
+              transform 150ms ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ==========================================================
+   LOGIN PALETTE
+   ========================================================== */
+body.page-login {
+  --bg: #FFFFFF;
+  --surface: #E8E5EC;        /* Soft Lilac - card */
+  --surface-2: #E2ECE9;      /* Sage Green Lembut - input */
+  --accent: #E0A899;         /* Terracotta - tombol utama */
+  --accent-2: #E8D8B8;       /* Muted Mustard - dekorasi */
+  --ink: #0F172A;            /* Ink Black - border & teks */
+  --text: #0F172A;
+  --text-muted: #475569;
+  color-scheme: light;
+}
+
+body.page-login[data-theme="dark"] {
+  --bg: #000000;
+  --surface: #2E2A3A;        /* Midnight Lavender - card */
+  --surface-2: #2C3A36;      /* Dark Sage - input */
+  --accent: #8C4333;         /* Burnt Sienna - tombol utama */
+  --accent-2: #1E293B;       /* Deep Slate - dekorasi */
+  --ink: #E2E8F0;            /* Putih Kapur - border & teks */
+  --text: #E2E8F0;
+  --text-muted: #94A3B8;
+  color-scheme: dark;
+}
+
+/* ==========================================================
+   DASHBOARD PALETTE
+   ========================================================== */
+body.page-dashboard {
+  --bg: #F4F4F0;             /* Putih Semen */
+  --surface: #FFFFFF;        /* Putih Bersih */
+  --ink: #0F172A;            /* Ink Black */
+  --text: #0F172A;
+  --text-muted: #55605A;
+  --nb-green: #6B7F61;       /* Muted Green */
+  --nb-yellow: #C2A25B;      /* Muted Yellow */
+  --nb-red: #A14A3F;         /* Muted Red */
+  --nb-green-soft: #6B7F6122;
+  --nb-yellow-soft: #C2A25B22;
+  --nb-red-soft: #A14A3F22;
+  --surface-2: #F4F4F0;
+  color-scheme: light;
+}
+
+body.page-dashboard[data-theme="dark"] {
+  --bg: #101010;             /* Arang Gelap */
+  --surface: #1E1E1E;        /* Abu Gelap */
+  --ink: #E2E8F0;            /* Putih Kapur */
+  --text: #E2E8F0;
+  --text-muted: #9AA5AE;
+  --nb-green: #4F5E48;       /* Dark Green */
+  --nb-yellow: #947B45;      /* Dark Yellow */
+  --nb-red: #7A3830;         /* Dark Red */
+  --nb-green-soft: #4F5E4833;
+  --nb-yellow-soft: #947B4533;
+  --nb-red-soft: #7A383033;
+  --slate: #334155;          /* Slate Gray */
+  --surface-2: #181818;
+  color-scheme: dark;
+}
+
+/* ----------------------------------------------------------
+   Lapisan kompatibilitas: memetakan nama variabel lama (dipakai
+   di main.css) ke token Neubrutalism baru, supaya seluruh komponen
+   yang sudah ada otomatis mengikuti palet baru tanpa ditulis ulang.
+   ---------------------------------------------------------- */
+body.page-dashboard {
+  --border: color-mix(in srgb, var(--ink) 14%, transparent);
+  --border-strong: color-mix(in srgb, var(--ink) 32%, transparent);
+  --bg-panel: var(--surface);
+  --bg-panel-2: var(--surface-2);
+  --bg-elevated: var(--surface);
+  --shadow-sm: 3px 3px 0px var(--ink);
+  --shadow-md: 6px 6px 0px var(--ink);
+  --radius-lg: var(--radius-md);
+
+  --accent-pond: var(--nb-green);
+  --accent-pond-soft: var(--nb-green-soft);
+  --accent-straw: var(--nb-yellow);
+  --accent-straw-soft: var(--nb-yellow-soft);
+  --accent-clay: var(--nb-red);
+  --accent-clay-soft: var(--nb-red-soft);
+  --accent-info: var(--nb-green);
+  --accent-info-soft: var(--nb-green-soft);
+  --accent-offline: var(--text-muted);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ==========================================================
+   NEUBRUTALISM COMPONENT MECHANICS (shared)
+   1) border flat 2px + radius 6px
+   2) hard shadow tanpa blur
+   3) hover/focus/active -> shadow hilang + translate(4px,4px)
+   ========================================================== */
+.nb-card, .panel, .login-card, .sensor-card, .summary-item {
+  background: var(--surface);
+  border: var(--nb-border-w) solid var(--ink);
+  border-radius: var(--radius-md);
+  box-shadow: var(--nb-shadow-offset) var(--nb-shadow-offset) 0px var(--ink);
+}
+
+.nb-input, .field input, .table-toolbar input, .table-toolbar select {
+  background: var(--surface-2);
+  border: var(--nb-border-w) solid var(--ink);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  box-shadow: var(--nb-shadow-offset) var(--nb-shadow-offset) 0px var(--ink);
+}
+.nb-input:hover, .field input:hover,
+.nb-input:focus, .field input:focus {
+  box-shadow: 0px 0px 0px var(--ink);
+  transform: translate(var(--nb-shadow-offset), var(--nb-shadow-offset));
+  outline: none;
+}
+
+.nb-btn, .btn, .login-btn {
+  background: var(--surface);
+  border: var(--nb-border-w) solid var(--ink);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  box-shadow: var(--nb-shadow-offset) var(--nb-shadow-offset) 0px var(--ink);
+  cursor: pointer;
+}
+.nb-btn:hover, .btn:hover, .login-btn:hover,
+.nb-btn:active, .btn:active, .login-btn:active {
+  box-shadow: 0px 0px 0px var(--ink);
+  transform: translate(var(--nb-shadow-offset), var(--nb-shadow-offset));
+}

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EMOOSE — Login | Smart Duck Farm Monitoring</title>
+<meta name="description" content="EMOOSE - Sistem Monitoring & Otomasi Kandang Entok Berbasis IoT. Login untuk mengakses dashboard real-time kandang entok pintar." />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/png" href="/assets/logo.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="/css/theme.css">
+<link rel="stylesheet" href="/css/login.css">
+</head>
+<body class="page-login" data-theme="dark">
+  <div class="login-shell">
+    <div class="login-top-actions">
+      <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme"></button>
+      <select class="lang-select" id="lang-select" aria-label="Language">
+        <option value="id">ID</option>
+        <option value="en">EN</option>
+      </select>
+    </div>
+
+    <main class="login-card">
+      <div class="login-brand">
+        <img class="logo" src="/assets/logo.png" alt="Logo EMOOSE - Smart Duck Farm Monitoring" width="72" height="72" />
+        <h1 class="title">EMOOSE</h1>
+        <p class="subtitle" id="typing-subtitle" data-i18n-key="login_subtitle" aria-live="polite"></p>
+      </div>
+
+      <div class="login-error" id="login-error" role="alert"></div>
+
+      <form id="login-form" autocomplete="off">
+        <div class="field">
+          <label for="username">Username()</label>
+          <input type="text" id="username" name="username" required autofocus autocomplete="off" />
+        </div>
+        <div class="field">
+          <label for="password">Password()</label>
+          <div class="field-password-wrap">
+            <input type="password" id="password" name="password" required autocomplete="off" />
+            <button type="button" class="toggle-password-btn" id="toggle-password" aria-label="Show/hide password">
+              <svg id="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <button type="submit" class="login-btn" id="login-btn" data-i18n="login_button">Masuk Dashboard</button>
+      </form>
+
+      <p class="login-footer" id="typing-footer" data-i18n-key="login_footer" aria-live="polite"></p>
+    </main>
+  </div>
+
+<script src="/js/theme.js"></script>
+<script src="/js/language.js"></script>
+<script src="/js/typing-effect.js"></script>
+<script src="/js/login.js"></script>
+</body>
+</html>

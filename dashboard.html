@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EMOOSE — Dashboard | Smart Duck Farm Monitoring</title>
+<meta name="description" content="Dashboard real-time monitoring dan otomasi kandang entok EMOOSE - suhu, kelembapan, kualitas udara, level air, dan kontrol aktuator." />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/png" href="/assets/logo.png" />
+<link rel="stylesheet" href="/css/theme.css">
+<link rel="stylesheet" href="/css/main.css">
+</head>
+<body class="page-dashboard" data-theme="dark">
+<div class="app-shell">
+
+  <!-- ============ HEADER ============ -->
+  <header class="app-header">
+    <div class="brand">
+      <img class="logo" src="/assets/logo.png" alt="Logo EMOOSE" width="36" height="36" />
+      <div class="brand-text">
+        <div class="title">EMOOSE</div>
+        <div class="subtitle" data-i18n="brand_subtitle">Smart Duck Farm Monitoring</div>
+      </div>
+    </div>
+
+    <div class="conn-status" id="conn-status">
+      <span class="conn-dot"></span>
+      <span id="conn-status-text">System Online | Edge AI Active</span>
+    </div>
+
+    <!-- Signature element: live instrumentation strip -->
+    <div class="node-strip" id="node-strip">
+      <div class="node-chip" id="chip-temp"><span class="dot"></span>TEMP</div>
+      <div class="node-chip" id="chip-hum"><span class="dot"></span>HUM</div>
+      <div class="node-chip" id="chip-mq135"><span class="dot"></span>MQ135</div>
+      <div class="node-chip" id="chip-water"><span class="dot"></span>WATER</div>
+      <div class="node-chip" id="chip-fan"><span class="dot"></span>FAN</div>
+      <div class="node-chip" id="chip-pump"><span class="dot"></span>PUMP</div>
+      <div class="node-chip" id="chip-door"><span class="dot"></span>DOOR</div>
+      <div class="node-chip" id="chip-wifi"><span class="dot"></span>WIFI</div>
+      <div class="node-chip" id="chip-telegram"><span class="dot"></span>TG</div>
+    </div>
+
+    <div class="header-right">
+      <div class="clock"><div id="clock-time">--:--:--</div><div class="date" id="clock-date">-</div></div>
+      <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme"></button>
+      <select class="lang-select" id="lang-select">
+        <option value="id">ID</option>
+        <option value="en">EN</option>
+      </select>
+      <button class="btn danger" id="logout-btn" data-i18n="nav_logout">Keluar</button>
+    </div>
+  </header>
+
+  <!-- ============ BODY ============ -->
+  <div class="app-body">
+
+    <!-- SIDEBAR -->
+    <aside class="panel sidebar">
+      <div class="safe-mode-banner" id="safe-mode-banner" data-i18n="safe_mode_text">⚠ Sensor Failure — Running Backup Mode</div>
+
+      <!-- EMOOSE DEMO SIMULATION MODULE: slot kosong, diisi JS hanya jika isDemoMaster -->
+      <div id="demo-master-slot"></div>
+
+      <div class="panel-title" data-i18n="abnormal_week_title">Status Abnormal (7 Hari Terakhir)</div>
+      <div class="abnormal-week-box">
+        <div class="num" id="abnormal-week-count">0</div>
+        <div class="label" data-i18n="abnormal_week_label">Kali Terdeteksi Abnormal</div>
+      </div>
+
+      <div class="panel-title" data-i18n="sidebar_summary_title">Ringkasan Hari Ini</div>
+      <div class="summary-grid">
+        <div class="summary-item">
+          <div class="num" id="sum-alarm">0</div>
+          <div class="label" data-i18n="sidebar_alarm_today">Total Alarm</div>
+        </div>
+        <div class="summary-item">
+          <div class="num" id="sum-fan">0</div>
+          <div class="label" data-i18n="sidebar_fan_on">Fan Aktif</div>
+        </div>
+        <div class="summary-item">
+          <div class="num" id="sum-pump">0</div>
+          <div class="label" data-i18n="sidebar_pump_on">Pompa Aktif</div>
+        </div>
+        <div class="summary-item">
+          <div class="num" id="node-name">01</div>
+          <div class="label" data-i18n="sidebar_node_label">Node Aktif</div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px">
+        <div class="label" style="font-size:11px;color:var(--text-muted);margin-bottom:6px" data-i18n="sidebar_status_label">Status Kandang</div>
+        <span class="status-badge NORMAL" id="status-badge">NORMAL</span>
+      </div>
+
+      <div style="margin-top:16px">
+        <div class="label" style="font-size:11px;color:var(--text-muted);margin-bottom:6px" data-i18n="status_sistem_title">Status Sistem</div>
+        <div class="status-sistem-list">
+          <div class="status-sistem-row"><span class="footer-dot off" id="ss-dot-server"></span><span data-i18n="status_sistem_server">Server</span></div>
+          <div class="status-sistem-row"><span class="footer-dot off" id="ss-dot-socket"></span><span data-i18n="status_sistem_socket">Socket.IO</span></div>
+          <div class="status-sistem-row"><span class="footer-dot off" id="ss-dot-db"></span><span data-i18n="status_sistem_db">Database</span></div>
+          <div class="status-sistem-row"><span class="footer-dot off" id="ss-dot-esp"></span><span data-i18n="status_sistem_esp">ESP32 EMOOSE</span></div>
+          <div class="status-sistem-row status-sistem-wifi"><span data-i18n="status_sistem_wifi">Sinyal WiFi Emoose</span> : <span id="ss-wifi-signal">-</span></div>
+        </div>
+      </div>
+
+      <div class="cloud-sync">
+        <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+        <span id="cloud-sync-text" data-i18n="cloud_sync_text">Data terkirim ke Cloud 2 detik yang lalu</span>
+      </div>
+
+      <div style="margin-top:16px">
+        <div class="panel-title" style="margin-bottom:8px" data-i18n="sidebar_suggestion_title">Saran Tindakan</div>
+        <div class="suggestion-box" id="suggestion-box"></div>
+        <a href="/access-history" class="btn access-history-link" data-i18n="access_history_link">🕘 Riwayat Akses</a>
+      </div>
+
+      <div style="margin-top:16px">
+        <div class="panel-title" style="margin-bottom:4px" data-i18n="manual_control_title">Kontrol Manual</div>
+        <div class="manual-control-grid">
+          <button class="btn manual-btn" id="manual-fan">
+            <span data-i18n="manual_fan">Fan (Ventilasi)</span>
+            <span class="manual-state">OFF</span>
+          </button>
+          <button class="btn manual-btn" id="manual-pump">
+            <span data-i18n="manual_pump">Pompa Air</span>
+            <span class="manual-state">OFF</span>
+          </button>
+          <button class="btn manual-btn" id="manual-door">
+            <span data-i18n="manual_door">Pintu (SG90)</span>
+            <span class="manual-state">CLOSE</span>
+          </button>
+          <button class="btn manual-btn" id="manual-maintenance">
+            <span data-i18n="manual_maintenance">Maintenance (MG996R)</span>
+            <span class="manual-state">OFF</span>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN COLUMN -->
+    <main class="main-col">
+      <section class="panel">
+        <div class="panel-title" data-i18n="digital_twin_title">Digital Twin Kandang</div>
+        <div class="digital-twin-wrap">
+          <div class="digital-twin-frame">
+            <div id="digital-twin-map"></div>
+            <div class="dt-water-tank" style="left:29%; top:83%;">
+              <div class="dt-water-tank-fill" id="dt-water-fill"></div>
+            </div>
+            <div class="dt-popup" id="dt-popup"></div>
+          </div>
+          <div class="digital-twin-legend">
+            <span><span class="dot" id="legend-dot-normal" style="background:#0eba05"></span> Normal</span>
+            <span><span class="dot" id="legend-dot-abnormal" style="background:#cb0606"></span> Abnormal</span>
+            <span><span class="dot" style="background:#ff960c"></span> Manual/Aktif</span>
+          </div>
+          <div class="ducks-indicator" id="dt-ducks">—</div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title" data-i18n="table_title">Log Aktivitas (Event Timeline)</div>
+        <div class="table-toolbar">
+          <input type="text" id="search-input" data-i18n-ph="table_search_ph" placeholder="Cari event atau deskripsi..." />
+          <select id="status-filter">
+            <option value="" data-i18n="table_filter_all">Semua Level</option>
+            <option value="INFO">INFO</option>
+            <option value="WARNING">WARNING</option>
+            <option value="ALARM">ALARM</option>
+          </select>
+          <input type="date" id="date-filter" />
+          <button class="btn" id="refresh-log-btn" data-i18n="table_refresh" title="Refresh">⟳</button>
+          <div class="spacer"></div>
+          <div class="export-menu-wrap">
+            <button class="btn" id="export-menu-btn" data-i18n="table_export">Ekspor ▾</button>
+            <div class="export-dropdown" id="export-dropdown">
+              <button id="export-csv-btn" data-i18n="table_export_csv">Ekspor CSV</button>
+              <button id="export-pdf-btn" data-i18n="table_export_pdf">Ekspor PDF</button>
+            </div>
+          </div>
+          <div class="export-menu-wrap">
+            <button class="btn danger" id="delete-menu-btn" data-i18n="table_delete_all">Hapus ▾</button>
+            <div class="export-dropdown" id="delete-dropdown">
+              <button id="delete-range-all" data-i18n="delete_range_all">Hapus Semua</button>
+              <button id="delete-range-3d" data-i18n="delete_range_3d">Lebih dari 3 Hari Lalu</button>
+              <button id="delete-range-1w" data-i18n="delete_range_1w">Lebih dari 1 Minggu Lalu</button>
+              <button id="delete-range-3w" data-i18n="delete_range_3w">Lebih dari 3 Minggu Lalu</button>
+              <button id="delete-range-1m" data-i18n="delete_range_1m">Lebih dari 1 Bulan Lalu</button>
+            </div>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="log-table">
+            <thead>
+              <tr>
+                <th data-i18n="table_col_time">Waktu</th>
+                <th data-i18n="table_col_event">Event</th>
+                <th data-i18n="table_col_desc">Deskripsi</th>
+                <th data-i18n="table_col_level">Level</th>
+                <th data-i18n="table_col_source">Source</th>
+                <th data-i18n="table_col_action">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="log-tbody"></tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <button class="btn ghost" id="prev-page" data-i18n="table_prev">Sebelumnya</button>
+          <span id="pagination-info"></span>
+          <button class="btn ghost" id="next-page" data-i18n="table_next">Berikutnya</button>
+        </div>
+      </section>
+    </main>
+
+    <!-- RIGHT PANEL -->
+    <aside class="right-col">
+      <section class="panel">
+        <div class="panel-title" data-i18n="right_sensor_title">Sensor Real-Time</div>
+        <div class="sensor-cards">
+          <div class="sensor-card normal" id="card-temp">
+            <svg class="gauge gauge-half" id="gauge-temp" viewBox="0 0 44 24">
+              <path class="track" d="M4,22 A18,18 0 0 1 40,22" fill="none" stroke-width="4"/>
+              <path class="value" d="M4,22 A18,18 0 0 1 40,22" fill="none" stroke-width="4" stroke-linecap="round"/>
+            </svg>
+            <div class="info"><div class="val" id="val-temp">--</div><div class="label" data-i18n="sensor_temp">Suhu</div></div>
+          </div>
+          <div class="sensor-card normal" id="card-hum">
+            <svg class="gauge gauge-half" id="gauge-hum" viewBox="0 0 44 24">
+              <path class="track" d="M4,22 A18,18 0 0 1 40,22" fill="none" stroke-width="4"/>
+              <path class="value" d="M4,22 A18,18 0 0 1 40,22" fill="none" stroke-width="4" stroke-linecap="round"/>
+            </svg>
+            <div class="info"><div class="val" id="val-hum">--</div><div class="label" data-i18n="sensor_hum">Kelembapan</div></div>
+          </div>
+          <div class="sensor-card normal" id="card-mq135">
+            <svg class="gauge gauge-half" id="gauge-mq135" viewBox="0 0 44 24">
+              <path class="track" d="M4,22 A18,18 0 0 1 40,22" fill="none" stroke-width="4"/>
+              <path class="value" d="M4,22 A18,18 0 0 1 40,22" fill="none" stroke-width="4" stroke-linecap="round"/>
+            </svg>
+            <div class="info"><div class="val" id="val-mq135">--</div><div class="label" data-i18n="sensor_mq135">Kualitas Udara</div></div>
+          </div>
+          <div class="sensor-card normal" id="card-water">
+            <svg class="gauge gauge-half" id="gauge-water" viewBox="0 0 44 24">
+              <path class="track" d="M4,22 A18,18 0 0 1 40,22" fill="none" stroke-width="4"/>
+              <path class="value" d="M4,22 A18,18 0 0 1 40,22" fill="none" stroke-width="4" stroke-linecap="round"/>
+            </svg>
+            <div class="info"><div class="val" id="val-water">--</div><div class="label" data-i18n="sensor_water">Level Air</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title" data-i18n="right_actuator_title">Status Aktuator</div>
+        <div class="actuator-row"><span data-i18n="actuator_fan">Fan (Ventilasi)</span><span class="actuator-state OFF" id="actuator-fan">OFF</span></div>
+        <div class="actuator-row"><span data-i18n="actuator_pump">Pompa Air</span><span class="actuator-state OFF" id="actuator-pump">OFF</span></div>
+        <div class="actuator-row"><span data-i18n="actuator_door">Pintu Otomatis (SG90)</span><span class="actuator-state CLOSE" id="actuator-door">CLOSE</span></div>
+        <div class="actuator-row"><span data-i18n="actuator_maintenance">Mode Maintenance (MG996R)</span><span class="actuator-state OFF" id="actuator-maintenance">OFF</span></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title" data-i18n="health_score_title">Farm Health Score</div>
+        <div class="health-score-wrap">
+          <svg class="health-score-ring-svg" viewBox="0 0 100 100">
+            <circle class="track" cx="50" cy="50" r="42" fill="none" stroke-width="8"/>
+            <circle class="value" id="health-score-ring" cx="50" cy="50" r="42" fill="none" stroke-width="8" stroke-linecap="round" transform="rotate(-90 50 50)"/>
+          </svg>
+          <div>
+            <div class="health-score-value"><span id="health-score-value">--</span>/100</div>
+          </div>
+        </div>
+        <div class="health-breakdown">
+          <div data-i18n="sensor_temp">Suhu</div><span class="v" id="health-temp">-</span>
+          <div data-i18n="sensor_hum">Kelembapan</div><span class="v" id="health-hum">-</span>
+          <div data-i18n="sensor_mq135">Gas</div><span class="v" id="health-gas">-</span>
+          <div data-i18n="sensor_water">Air</div><span class="v" id="health-water">-</span>
+          <div data-i18n="health_movement">Gerakan</div><span class="v" id="health-movement">-</span>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title" data-i18n="right_chart_title">Grafik Tren</div>
+        <div class="chart-tabs">
+          <button class="chart-tab active" data-metric="temperature">Temp</button>
+          <button class="chart-tab" data-metric="humidity">Hum</button>
+          <button class="chart-tab" data-metric="mq135">MQ135</button>
+          <button class="chart-tab" data-metric="water">Water</button>
+        </div>
+        <canvas class="chart-canvas" id="trend-chart"></canvas>
+
+        <div style="margin-top:14px">
+          <div class="panel-title" style="margin-bottom:4px" data-i18n="right_dist_title">Distribusi Status Hari Ini</div>
+          <div class="dist-bar">
+            <span class="NORMAL" id="dist-normal" style="width:100%"></span>
+            <span class="WARNING" id="dist-warning" style="width:0%"></span>
+            <span class="ABNORMAL" id="dist-abnormal" style="width:0%"></span>
+          </div>
+          <div class="dist-legend"><span id="dist-legend-text">N:0 W:0 A:0</span></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title" data-i18n="widgets_title">Water · Energy · Maintenance</div>
+        <div class="widget-grid">
+          <div class="widget-box">
+            <div class="widget-title" data-i18n="widget_water">Siklus Pompa</div>
+            <div class="widget-value" id="pump-cycles-today">--x</div>
+            <div class="widget-sub" data-i18n="widget_water_sub">Pompa ON hari ini</div>
+          </div>
+          <div class="widget-box">
+            <div class="widget-title" data-i18n="widget_energy">Energi Hari Ini</div>
+            <div class="widget-value" id="energy-total-kwh">-- kWh</div>
+            <div class="widget-sub">Fan <span id="energy-fan-kwh">-</span> · Pompa <span id="energy-pump-kwh">-</span></div>
+          </div>
+          <div class="widget-box">
+            <div class="widget-title" data-i18n="widget_fan_hours">Jam Aktif Fan</div>
+            <div class="widget-value" id="maint-fan-hours">-- jam</div>
+          </div>
+          <div class="widget-box">
+            <div class="widget-title" data-i18n="widget_servo_cycles">Siklus Servo</div>
+            <div class="widget-value" id="maint-servo-cycles">--x</div>
+          </div>
+        </div>
+        <div class="maintenance-banner" id="maintenance-banner"></div>
+      </section>
+    </aside>
+
+  </div>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="app-footer">
+    <div style="width:100%; display:flex; flex-wrap:wrap; gap:18px;">
+      <span id="foot-server"><span class="footer-dot on"></span><strong data-i18n="footer_server">Server</strong>: <span class="footer-text">ONLINE</span></span>
+      <span id="foot-esp32"><span class="footer-dot off"></span><strong data-i18n="footer_esp32">ESP32</strong>: <span class="footer-text">-</span></span>
+      <span id="foot-telegram"><span class="footer-dot off"></span><strong data-i18n="footer_telegram">Telegram</strong>: <span class="footer-text">-</span></span>
+      <span id="foot-database"><span class="footer-dot on"></span><strong data-i18n="footer_database">Database</strong>: <span class="footer-text">SQLite</span></span>
+      <span><strong data-i18n="footer_version">Versi</strong>: EMOOSE v2.0</span>
+      <span><strong data-i18n="footer_clients">Klien Terhubung</strong>: <span id="foot-clients-count">0</span></span>
+      <span id="demo-unlock-icon" title="Presenter Mode" style="cursor:pointer;opacity:0.35;user-select:none;">🔑</span>
+    </div>
+    <div style="width:100%; margin-top:8px; font-family:var(--font-mono); font-size:10.5px; opacity:0.8;" id="footer-typing-copyright"></div>
+  </footer>
+</div>
+
+<div id="toast-stack"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="/js/theme.js"></script>
+<script src="/js/language.js"></script>
+<script src="/js/typing-effect.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/socket.js"></script>
+<script src="/js/digital-twin.js"></script>
+<script src="/js/manual-control.js"></script>
+<script src="/js/analytics.js"></script>
+<script src="/js/chart.js"></script>
+<script src="/js/table.js"></script>
+<script src="/js/dashboard.js"></script>
+<!-- EMOOSE DEMO SIMULATION MODULE: hapus baris ini + routes/demo.js + public/js/demo.js
+     untuk menghilangkan fitur "Simulasi Darurat" sepenuhnya, tanpa memengaruhi sistem asli -->
+<script src="/js/demo.js"></script>
+</body>
+</html>
